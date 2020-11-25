@@ -14,7 +14,7 @@ from yolov3.yolo_cfg import yolo_images, yolo_txt_folder, yolo_label_folder, yol
 
 def generate_images():
     if not os.path.exists(yolo_images):
-        os.mkdir(yolo_images)
+        os.makedirs(yolo_images, exist_ok=True)
 
     files = os.listdir(ori_images_folder)
     for file in files:
@@ -136,7 +136,7 @@ def make_yolo_names():
 
 
 if __name__ == '__main__':
-    # generate_images()
+    generate_images()
     make_txt()
     make_label()
     make_yolo_data()
