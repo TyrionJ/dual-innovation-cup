@@ -148,7 +148,7 @@ def get_args():
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
     args = get_args()
-    device = torch.device('cuda' if False and torch.cuda.is_available() and False else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() and False else 'cpu')
     logging.info(f'Using device {device}')
 
     start_epoch, model_path = get_epoch_model()
