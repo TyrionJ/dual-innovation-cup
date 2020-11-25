@@ -16,4 +16,3 @@ last_model = f'{dir_checkpoint}/last.pth'
 
 n_channels = 3
 n_classes = 1
-

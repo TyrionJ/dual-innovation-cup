@@ -46,13 +46,13 @@ def recovery(in_file, out_file):
 
 if __name__ == '__main__':
     if not os.path.exists(dir_img):
-        os.mkdir(dir_img)
+        os.makedirs(dir_img, exist_ok=True)
     if not os.path.exists(dir_mask):
-        os.mkdir(dir_mask)
+        os.makedirs(dir_mask, exist_ok=True)
 
     print('Generating images ...')
     imgs = os.listdir(ori_images_folder)
-    to_width = 1024
+    to_width = 2048
     for img in imgs:
         print(f' Processing {img} ...', end='')
         compress(f'{ori_images_folder}/{img}', f'{dir_img}/{img}', to_width)

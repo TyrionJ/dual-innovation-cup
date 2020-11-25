@@ -6,3 +6,4 @@ __pycache__
 *.pt
 /pspnet_lib/model/
 /unet/checkpoints/
+/unet/runs/

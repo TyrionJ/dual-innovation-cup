@@ -1,3 +1,5 @@
+import sys
+
 __all__ = ['ori_images_folder',
            'mask_folder',
            'bnd_box_folder',
@@ -6,10 +8,10 @@ __all__ = ['ori_images_folder',
            'classes',
            'unet_root']
 
+project_name = 'dual-innovation-cup'
+root = sys.argv[0].split(project_name)[0] + project_name
+
 classes = ['bomb']
-
-root = 'D:/Program/Python/dual-innovation-cup'
-
 data_folder = f'{root}/data'
 
 ori_images_folder = f'{data_folder}/01-自爆缺陷原图'
