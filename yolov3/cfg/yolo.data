@@ -1,5 +1,5 @@
 classes=1
-train=D:/Program/Python/dual-innovation-cup/yolov3/data/train.txt
-valid=D:/Program/Python/dual-innovation-cup/yolov3/data/val.txt
-names=D:/Program/Python/dual-innovation-cup/yolov3/cfg/yolo.names
-backup=D:/Program/Python/dual-innovation-cup/yolov3/data/backup
+train=D:/Program/dual-innovation-cup/yolov3/data/train.txt
+valid=D:/Program/dual-innovation-cup/yolov3/data/val.txt
+names=D:/Program/dual-innovation-cup/yolov3/cfg/yolo.names
+backup=D:/Program/dual-innovation-cup/yolov3/data/backup

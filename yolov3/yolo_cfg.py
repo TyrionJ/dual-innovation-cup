@@ -7,6 +7,7 @@ yolo_images = f'{yolo_data_folder}/images'
 yolo_txt_folder = f'{yolo_data_folder}/txt'
 yolo_label_folder = f'{yolo_data_folder}/labels'
 yolo_pred_output = f'{yolo_data_folder}/output'
+yolo_result_file = f'{yolo_data_folder}/results.txt'
 
 yolo_data = f'{yolo_root}/cfg/yolo.data'
 yolo_names = f'{yolo_root}/cfg/yolo.names'
@@ -17,6 +18,5 @@ yolo_weights_folder = f'{yolo_root}/weights'
 yolo_weights = f'{yolo_weights_folder}/yolov3-spp-ultralytics.pt'
 yolo_best = f'{yolo_weights_folder}/best.pt'
 yolo_last = f'{yolo_weights_folder}/last.pt'
-yolo_result_file = f'{yolo_root}/results.txt'
 
 img_size = 512

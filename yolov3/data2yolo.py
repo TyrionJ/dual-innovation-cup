@@ -6,7 +6,7 @@ import matplotlib.image as Image
 import PIL
 
 from proj_cfg import ori_images_folder, mask_folder
-from proj_utils.xml_parser import has_label, BoundInfo, get_bounds
+from yolov3.utils.xml_parser import has_label, get_bounds
 
 from yolov3.yolo_cfg import yolo_images, yolo_txt_folder, yolo_label_folder, yolo_data_folder, yolo_data, yolo_names, \
     yolo_classes
@@ -32,7 +32,7 @@ def generate_images():
 def make_txt():
     print('Generating train, test and validate set ...', end='')
     if not os.path.exists(yolo_txt_folder):
-        os.mkdir(yolo_txt_folder)
+        os.makedirs(yolo_txt_folder, exist_ok=True)
 
     train_val_percent = 0.1
     train_percent = 0.9
@@ -72,7 +72,7 @@ def make_txt():
 def make_label():
     print('Generating labels ...', end='')
     if not os.path.exists(yolo_label_folder):
-        os.makedirs(yolo_label_folder)
+        os.makedirs(yolo_label_folder, exist_ok=True)
 
     sets = ['train', 'test', 'val']
 
