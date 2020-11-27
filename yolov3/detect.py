@@ -1,6 +1,9 @@
 import argparse
 
+from PIL.ImageEnhance import Color
+
 from yolov3.models import *
+from yolov3.utils.bbox_iou import calculate_iou
 from yolov3.utils.datasets import *
 from yolov3.utils.utils import *
 from yolov3.yolo_cfg import yolo_cfg, yolo_names, yolo_last, img_size, yolo_images, yolo_pred_output
@@ -12,9 +15,8 @@ def detect():
 
     # Initialize
     device = torch_utils.select_device(device='cpu' if ONNX_EXPORT else opt.device)
-    if os.path.exists(out):
-        shutil.rmtree(out)
-    os.makedirs(out)
+    if not os.path.exists(out):
+        os.makedirs(out, exist_ok=True)
 
     # Initialize model
     model = Darknet(opt.cfg, imgsz)
@@ -57,6 +59,7 @@ def detect():
                                    multi_label=True,
                                    classes=opt.classes)
 
+        pred = filter_bbox(pred)
         # Process detections
         for i, det in enumerate(pred):
             p, s, im0 = path, '', im0s
@@ -73,15 +76,16 @@ def detect():
                     s += '%g %ss, ' % (n, names[int(c)])  # add to string
 
                 # Write results
+                file = open(save_path[:save_path.rfind('.')] + '.txt', 'w')
                 for *xyxy, conf, cls in reversed(det):
                     if save_txt:  # Write to file
-                        xywh = (xyxy2xywh(torch.tensor(xyxy).view(1, 4)) / gn).view(-1).tolist()  # normalized xywh
-                        with open(save_path[:save_path.rfind('.')] + '.txt', 'a') as file:
-                            file.write(('%g ' * 5 + '\n') % (cls, *xywh))  # label format
+                        xmin, ymin, xmax, ymax = int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])
+                        file.write(f'{int(cls)},{xmin},{ymin},{xmax},{ymax},{round(conf.item(), 4)},{names[int(cls)]}\n')
 
                     if save_img:  # Add bbox to image
-                        label = '%s %.2f' % (names[int(cls)], conf)
-                        plot_one_box(xyxy, im0, label=label, color=colors[int(cls)])
+                        # label = '%s %.2f' % (names[int(cls)], conf)
+                        plot_one_box(xyxy, im0, label=None, color=(255,255,0))
+                file.close()
 
             # Print time (inference + NMS)
             print('%sDone. (%.3fs)' % (s, t2 - t1))
@@ -110,6 +114,25 @@ def detect():
     print('Done. (%.3fs)' % (time.time() - t0))
 
 
+def filter_bbox(pred):
+    rst = []
+    for i, p in enumerate(pred):
+        if p is not None and len(p):
+            flag = np.ones(len(p))
+            for j in range(len(p)):
+                for k in range(j + 1, len(p)):
+                    iou = calculate_iou(p[j], p[k])
+                    if iou > 0:
+                        if p[j][4] < p[k][4]:
+                            flag[j] = 0
+                            flag[k] = 1
+                        else:
+                            flag[k] = 0
+                            flag[j] = 1
+            rst.append(p[flag == 1])
+    return rst
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--cfg', type=str, default=yolo_cfg, help='*.cfg path')
@@ -122,7 +145,7 @@ if __name__ == '__main__':
     parser.add_argument('--iou-thres', type=float, default=0.6, help='IOU threshold for NMS')
     parser.add_argument('--fourcc', type=str, default='mp4v', help='output video codec (verify ffmpeg support)')
     parser.add_argument('--device', default='cpu', help='device id (i.e. 0 or 0,1) or cpu')
-    parser.add_argument('--save-txt', action='store_true', help='save results to *.txt')
+    parser.add_argument('--save_txt', default=True, action='store_true', help='save results to *.txt')
     parser.add_argument('--classes', nargs='+', default=['0'], type=int, help='filter by class')
     opt = parser.parse_args()
     opt.cfg = check_file(opt.cfg)  # check file

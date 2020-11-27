@@ -18,7 +18,9 @@ def generate_images():
 
     files = os.listdir(ori_images_folder)
     for file in files:
-        if has_label(f'{file[:-4]}.xml'):
+        if os.path.exists(f'{yolo_images}/{file}'):
+            continue
+        if True or has_label(f'{file[:-4]}.xml'):
             print(f'Generating {file} ...')
             ori_img = Image.imread(f'{ori_images_folder}/{file}')
             mask_img = Image.imread(f'{mask_folder}/{file[:-4]}.png')
@@ -137,7 +139,7 @@ def make_yolo_names():
 
 if __name__ == '__main__':
     generate_images()
-    make_txt()
-    make_label()
-    make_yolo_data()
-    make_yolo_names()
+    # make_txt()
+    # make_label()
+    # make_yolo_data()
+    # make_yolo_names()

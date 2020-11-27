@@ -12,13 +12,18 @@ from unet.model import UNet
 
 from torch.utils.tensorboard import SummaryWriter
 
-from unet.unet_cfg import best_model, last_model,\
+from unet.unet_cfg import mode,\
+    all_best_model, all_last_model,\
+    vertical_best_model, vertical_last_model,\
     epoch_file, result_file,\
     dir_checkpoint, dir_mask, dir_img, \
     n_channels, n_classes
 from unet.utils.dataset import BasicDataset
 from torch.utils.data import DataLoader, random_split
 
+
+best_model = all_best_model if mode == 'all' else vertical_best_model
+last_model = all_last_model if mode == 'all' else vertical_last_model
 
 min_gpu = 0
 torch.cuda.set_device(min_gpu)
@@ -121,7 +126,7 @@ def train_net(net,
 
 
 def get_epoch_model():
-    if os.path.exists(last_model):
+    if os.path.exists(last_model) and os.path.exists(epoch_file):
         with open(epoch_file) as f:
             epoch = int(f.readline())
         return epoch + 1, last_model
@@ -139,7 +144,7 @@ def get_args():
                         help='Learning rate', dest='lr')
     parser.add_argument('-s', '--scale', dest='scale', type=float, default=0.5,
                         help='Downscaling factor of the images')
-    parser.add_argument('-v', '--validation', dest='val', type=float, default=0,
+    parser.add_argument('-v', '--validation', dest='val', type=float, default=20,
                         help='Percent of the data that is used as validation (0-100)')
 
     return parser.parse_args()

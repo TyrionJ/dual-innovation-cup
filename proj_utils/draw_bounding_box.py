@@ -1,18 +1,24 @@
+import os
 from PIL import Image, ImageDraw
 
-from proj_cfg import ori_images_folder
-from proj_utils.xml_parser import get_bounds, BoundInfo
+from proj_cfg import ori_images_folder, marked_folder
+from proj_utils.xml_parser import get_bounds
 
 
-def draw_bnd_img(img_name, ann_file=None):
+def draw_bnd_img(img_name):
+    os.makedirs(marked_folder, exist_ok=True)
+
     img = Image.open(f'{ori_images_folder}/{img_name}')
     draw = ImageDraw.Draw(img)
-    bnds = BoundInfo.load_bnds(ann_file) if ann_file is not None else get_bounds(img_name.replace('JPG', 'xml'))
+    bnds = get_bounds(img_name.replace('JPG', 'xml'))
     for bnd in bnds:
-        draw.rectangle(bnd.get_pos(), outline='red', width=3)
-    img.save(f'/{img_name}')
+        draw.rectangle(bnd.get_pos(), outline='red', width=10)
+    img.save(f'{marked_folder}/{img_name}')
     del draw
 
 
 if __name__ == '__main__':
-    draw_bnd_img('014.JPG')
+    for imgs in os.listdir(ori_images_folder):
+        print(f'Drawing {imgs} ...', end='')
+        draw_bnd_img(imgs)
+        print(f'\rDrawing {imgs} [DONE]')
